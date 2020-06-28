@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using AdvertApi.DTO.Requests;
+﻿using System.Security.Claims;
 using Cw11_WebApplication.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 
 namespace AdvertApi.Controllers
 {
@@ -20,29 +10,21 @@ namespace AdvertApi.Controllers
 
 	public class LoginsController : ControllerBase
 	{
-        private IConfiguration Configuration { get; set; }
 
 		private readonly IAdvertDbService _dbService;
 		
-		public LoginsController(IAdvertDbService dbService, IConfiguration configuration)
+		public LoginsController(IAdvertDbService dbService)
 		{
 			_dbService = dbService;
-            Configuration = configuration;
+            
 		}
 
 		[HttpPost]
         [AllowAnonymous]
         public IActionResult Login(ClientLoginRequest request)
         {
-            var claims = new[]
-			{
-			    new Claim(ClaimTypes.NameIdentifier, request.Login),
-                new Claim(ClaimTypes.Hash, request.Password),
-			};
-
 			if (_dbService.CheckLogin(request.Login, request.Password))
 			{
-				//var _client = _dbService.GetClient(request.Login);
 				var _token = _dbService.CreateFirstToken(request.Login);
 				return Ok(_token);
 			}

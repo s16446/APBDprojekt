@@ -28,7 +28,7 @@ namespace AdvertApi.Models
 
 		public string Salt { get; set; }
 
-		public string refreshToken {get; set;}
+		public string RefreshToken {get; set;}
 
 		public ICollection<Campaign> Campaigns { get; set; }
 	}

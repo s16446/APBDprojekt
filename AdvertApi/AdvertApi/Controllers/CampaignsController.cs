@@ -14,7 +14,6 @@ namespace AdvertApi.Controllers
 	[ApiController]
 	public class CampaignsController : ControllerBase
     {
-        private IConfiguration Configuration { get; set; }
 
 		private readonly IAdvertDbService _dbService;
 		

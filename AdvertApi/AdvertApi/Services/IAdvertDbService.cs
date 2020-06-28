@@ -1,5 +1,6 @@
 ﻿using AdvertApi.Controllers;
 using AdvertApi.DTO.Requests;
+using AdvertApi.DTO.Responses;
 using AdvertApi.Models;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace Cw11_WebApplication.Services
 
 		ICollection<CampaignResponse> GetCampaigns(string login);
 
-		CampaignResponse AddCampaign(CampaignAddingRequest request);
+		ICollection<CampaignCreatedResponse> AddCampaign(CampaignAddingRequest request);
 
 		double Test();
 

@@ -7,10 +7,12 @@ using System.Threading.Tasks;
 
 namespace AdvertApi.DTO.Responses
 {
-	public class CamapaignCreatedResponse
+	public class CampaignCreatedResponse
 	{
 		public Campaign  Campaign { get; set; }
 
-		public ICollection<Banner>  Banners { get; set; }
+		public Banner  Banner1 { get; set; }
+
+		public Banner  Banner2 { get; set; }
 	}
 }
