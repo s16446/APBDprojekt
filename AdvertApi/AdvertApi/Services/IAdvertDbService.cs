@@ -21,7 +21,7 @@ namespace Cw11_WebApplication.Services
 		
 		Token CreateToken(string login);
 
-		IEnumerable<CampaignResponse> GetCampaigns(string login);
+		ICollection<CampaignResponse> GetCampaigns(string login);
 
 		CampaignResponse AddCampaign(CampaignAddingRequest request);
 

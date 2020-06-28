@@ -150,13 +150,13 @@ namespace Cw11_WebApplication.DAL
 			;
 		}
 
-		public IEnumerable<CampaignResponse> GetCampaigns(string login)
+		public ICollection<CampaignResponse> GetCampaigns(string login)
 		{
 			Console.WriteLine(login);
-			var _response = from c in _context.Clients
+			var _response = from c in _context.Clients.Where(c => c.Login == login)
 					join cc in _context.Campaigns on c.IdClient equals cc.IdClient
 					join b in _context.Banners on cc.IdCampaign equals b.IdCampaign
-					where c.Login == login
+					
 					orderby cc.StartDate descending
 					select new CampaignResponse 
 					  {
@@ -165,7 +165,7 @@ namespace Cw11_WebApplication.DAL
 						CampaignStartDate = cc.StartDate,
 						BannerName = b.Name
 					  };
-			return _response;
+			return _response.ToList();
 		}
 
 		public ICollection<CampaignResponse> AddCampaign(CampaignAddingRequest request)
