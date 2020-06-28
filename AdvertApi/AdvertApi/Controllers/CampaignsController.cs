@@ -27,9 +27,7 @@ namespace AdvertApi.Controllers
 		public IActionResult GetTest()
 		{	
 			return Ok(_dbService.Test());
-			
 		}
-
 
 		[HttpPost]
 		public IActionResult AddCampaign(CampaignAddingRequest request)

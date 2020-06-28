@@ -48,7 +48,7 @@ namespace AdvertApi
 				}
 			);
 
-		services.AddDbContext<AdvertDbContext>(options => 
+			services.AddDbContext<AdvertDbContext>(options => 
 			{
 				options.UseSqlServer("Data Source=db-mssql;Initial Catalog=s16446;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
 			}

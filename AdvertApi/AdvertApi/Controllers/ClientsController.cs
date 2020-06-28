@@ -80,8 +80,8 @@ namespace AdvertApi.Controllers
             } ;
         }
 
-		[HttpGet("{login}")]
         [Authorize]
+		[HttpGet("{login}")]
         public IActionResult GetCampaigns(string login)
         {
             var _campaigns = _dbService.GetCampaigns(login);

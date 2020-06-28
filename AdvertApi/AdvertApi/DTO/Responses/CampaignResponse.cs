@@ -8,8 +8,6 @@ namespace Cw11_WebApplication.Services
 
 		public string LastName { get; set; }
 
-		public string Login { get; set; }
-
 		public DateTime CampaignStartDate { get; set; }
 
 		public string BannerName { get; set; }
