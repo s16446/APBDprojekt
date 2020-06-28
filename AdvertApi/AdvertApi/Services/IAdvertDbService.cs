@@ -24,5 +24,6 @@ namespace Cw11_WebApplication.Services
 		ICollection<CampaignResponse> GetCampaigns(string login);
 		CampaignResponse AddCampaign(CampaignAddingRequest request);
 		double Test();
+		Token CreateFirstToken(string refreshToken);
 	}
 }

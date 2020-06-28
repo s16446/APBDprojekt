@@ -83,7 +83,42 @@ namespace Cw11_WebApplication.DAL
         }
 
 		public Token CreateToken(string token){
+			
 			var _client = _context.Clients.SingleOrDefault(c => c.refreshToken == token);
+			var claims = new[]
+			{
+				new Claim(ClaimTypes.NameIdentifier, _client.Login),
+				new Claim(ClaimTypes.Name, _client.Login)
+			};
+
+			var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["SecretKey"]));
+			var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+			var newToken = new JwtSecurityToken
+			(
+				issuer: "AdvertApi",
+				audience: "Clients",
+				claims: claims,
+				expires: DateTime.Now.AddMinutes(10),
+				signingCredentials: creds
+			);
+
+			var refreshToken = Guid.NewGuid();
+			var accessToken = new JwtSecurityTokenHandler().WriteToken(newToken);
+
+			SaveRefreshToken(_client.Login, refreshToken.ToString());
+
+			return new Token 
+			{
+				AccessToken = accessToken,
+				RefreshToken = refreshToken
+			}
+			;
+		}
+
+		public Token CreateFirstToken(string login){
+			
+			var _client = _context.Clients.SingleOrDefault(c => c.Login == login);
 			var claims = new[]
 			{
 				new Claim(ClaimTypes.NameIdentifier, _client.Login),

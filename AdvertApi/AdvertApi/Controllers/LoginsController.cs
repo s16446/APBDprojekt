@@ -42,8 +42,8 @@ namespace AdvertApi.Controllers
 
 			if (_dbService.CheckLogin(request.Login, request.Password))
 			{
-				var _client = _dbService.GetClient(request.Login);
-				var _token = _dbService.CreateToken(_client.refreshToken);
+				//var _client = _dbService.GetClient(request.Login);
+				var _token = _dbService.CreateFirstToken(request.Login);
 				return Ok(_token);
 			}
 			else
