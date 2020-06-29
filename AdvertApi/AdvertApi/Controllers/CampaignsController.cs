@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AdvertApi.DTO.Requests;
+﻿using AdvertApi.DTO.Requests;
+using Cw11_WebApplication.DAL;
 using Cw11_WebApplication.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 
 namespace AdvertApi.Controllers
 {
@@ -34,11 +29,18 @@ namespace AdvertApi.Controllers
 				return NotFound("Login not found");
 		}
 
+		//[Authorize]
 		[HttpPost]
 		public IActionResult AddCampaign(CampaignAddingRequest request)
 		{	
-			var campaign = _dbService.AddCampaign(request);
-			return new CreatedAtRouteResult("api/campaigns", campaign);
+			try {
+				var _campaign = _dbService.AddCampaign(request);
+				return new CreatedAtRouteResult("api/campaigns", _campaign);
+			} 
+			catch (StreetDoesNotMatchException exc)
+			{
+				return BadRequest(exc.Message); // 400
+			}
 			
 		}
 	}

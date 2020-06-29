@@ -1,4 +1,7 @@
-﻿using System;
+﻿using AdvertApi.Models;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Cw11_WebApplication.Services
 {
@@ -12,7 +15,8 @@ namespace Cw11_WebApplication.Services
 
 		public string BannerName { get; set; }
 
-		public string ClientLogin{ get; set; }
+		public string ClientLogin { get; set; }
+
 
 	}
 }

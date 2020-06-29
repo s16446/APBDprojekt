@@ -3,6 +3,7 @@ using AdvertApi.DTO.Requests;
 using AdvertApi.DTO.Responses;
 using AdvertApi.Models;
 using Cw11_WebApplication.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -153,7 +154,6 @@ namespace Cw11_WebApplication.DAL
 
 		public ICollection<CampaignResponse> GetCampaigns(string id)
 		{
-			//var _client= _context.Clients.Where(c => c.Login == id).SingleOrDefault();
 			var _response =
 			from c in _context.Clients
 			join cc in _context.Campaigns on c.IdClient equals cc.IdClient
@@ -169,20 +169,23 @@ namespace Cw11_WebApplication.DAL
 				ClientLogin = c.Login
 			}
 			;
-		return _response.ToList();
+			return _response.ToList();
 		}
 
-		public ICollection<CampaignCreatedResponse> AddCampaign(CampaignAddingRequest request)
+		public Campaign AddCampaign(CampaignAddingRequest request)
 		{
 			var _fromBuilding = _context.Buildings.FirstOrDefault(b => b.IdBuilding == request.FromIdBuilding);
+
 			if (_fromBuilding == null)
 				throw new BuidlingDoesNotExistException($"Building with id = {request.FromIdBuilding} does not exist");
+
 			var _toBuilding = _context.Buildings.FirstOrDefault(b => b.IdBuilding == request.ToIdBuilding);
+
 			if (_toBuilding == null)
 				throw new BuidlingDoesNotExistException($"Building with id = {request.ToIdBuilding} does not exist");
 			
 			if (_fromBuilding.Street != _toBuilding.Street)
-				throw new StreetDoesNotMatchException($"Streets do not match {_fromBuilding.Street},{_toBuilding.Street}");
+				throw new StreetDoesNotMatchException($"Streets do not match {_fromBuilding.Street}, {_toBuilding.Street}");
 			
 			var nFrom = request.FromIdBuilding;
 			var nTo = request.ToIdBuilding;
@@ -191,16 +194,6 @@ namespace Cw11_WebApplication.DAL
 			var area2 = _context.Buildings.Where(b => b.IdBuilding > nFrom && b.IdBuilding <= nTo).Select(b => b.Height).Max()*(nTo - nFrom + 1);
 
 			var area = area1 + area2;
-
-			var _campaign = new Campaign
-			{
-				IdClient = request.IdClient,
-				StartDate = request.StartDate,
-				EndDate = request.EndDate,	
-				PricePerSquareMeter = request.PricePerSquareMeter,
-				FromIdBuilding = request.FromIdBuilding,
-				ToIdBuilding = request.ToIdBuilding
-			};
 
 			for (int i = nFrom; i < nTo; i++)
 			{
@@ -212,58 +205,43 @@ namespace Cw11_WebApplication.DAL
 				}	
 			};
 
-			_context.Campaigns.Add(_campaign);
-			//var _banner1 = new Banner{
-			//	Campaign = _campaign,
-			//	Name = "Banner",
-			//	Price = request.PricePerSquareMeter * area1,
-			//	Area = area1
-			//};
+			var _campaign = new Campaign {
+				IdClient = request.IdClient,
+				StartDate = request.StartDate,
+				EndDate = request.EndDate,	
+				PricePerSquareMeter = request.PricePerSquareMeter,
+				FromIdBuilding = request.FromIdBuilding,
+				ToIdBuilding = request.ToIdBuilding
+			};
 
-			//var _banner2 = new Banner{
-			//	Campaign = _campaign,
-			//	Name = "Banner",
-			//	Price = request.PricePerSquareMeter * area2,
-			//	Area = area2
-			//};
-			
-			//_context.Banners.Add(_banner1);
-			//_context.Banners.Add(_banner2);
+			var _banner1 = new Banner
+			{
+				Name = "Banner",
+				Price = request.PricePerSquareMeter * area1,
+				Area = area1
+			};
 
+			var _banner2 = new Banner
+			{	
+				Name = "Banner",
+				Price = request.PricePerSquareMeter * area2,
+				Area = area2
+			};
+
+			var _new = _context.Campaigns.Add(_campaign).Entity;
 			_context.SaveChanges();
 
-			var _response = from c in _context.Clients
-						join cc in _context.Campaigns on c.IdClient equals cc.IdClient
-						join b in _context.Banners on cc.IdCampaign equals b.IdCampaign
-						orderby cc.StartDate descending
-						select new CampaignCreatedResponse
-						{
-							Campaign = _campaign
-							//Banner1 = _banner1,
-							//Banner2 = _banner2
-						};
-			return _response.ToList();
+			var newCampaign = _context.Campaigns.Include(b => b.Banners).FirstOrDefault(i=>i.IdCampaign == _new.IdCampaign);
+
+			newCampaign.Banners.Add(_banner1);
+			newCampaign.Banners.Add(_banner2);
+			
+			_context.SaveChanges();
+
+			return _new;
 		}
 
 
-		public double Test(){
-			var nFrom = 1;
-			var nTo = 4;
 
-			var area1 = _context.Buildings.Where(b => b.IdBuilding == nFrom).Select(b => b.Height).Max()*nFrom;
-			var area2 = _context.Buildings.Where(b => b.IdBuilding > nFrom && b.IdBuilding <= nTo).Select(b => b.Height).Max()*(nTo - nFrom + 1);
-
-			var area = area1 + area2;
-
-			for (int i = nFrom; i < nTo; i++){
-				area1 = _context.Buildings.Where(b => b.IdBuilding >= nFrom && b.IdBuilding <= i).Select(b => b.Height).Max()*(i - nFrom + 1);
-				area2 = _context.Buildings.Where(b => b.IdBuilding >= i + 1 && b.IdBuilding <= nTo).Select(b => b.Height).Max()*(nTo - (i + 1) + 1);
-				var areaNew = area1 + area2;
-				if (areaNew < area) {
-					area = areaNew;
-				}	
-			}
-			return area;
-		}
 	}
 }
