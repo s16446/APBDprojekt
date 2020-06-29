@@ -80,18 +80,5 @@ namespace AdvertApi.Controllers
             } ;
         }
 
-        [Authorize]
-		[HttpGet("{login}")]
-        public IActionResult GetCampaigns(string login)
-        {
-            var _campaigns = _dbService.GetCampaigns(login);
-             
-            if (_campaigns != null) {
-                return Ok(_campaigns);
-            }
-            else {
-                return NotFound("Login not found");
-            }
-        }
 	}
 }

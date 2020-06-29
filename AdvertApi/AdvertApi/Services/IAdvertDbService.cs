@@ -22,7 +22,7 @@ namespace Cw11_WebApplication.Services
 		
 		Token CreateToken(string login);
 
-		ICollection<CampaignResponse> GetCampaigns(string login);
+		ICollection<CampaignResponse> GetCampaigns(string id);
 
 		ICollection<CampaignCreatedResponse> AddCampaign(CampaignAddingRequest request);
 

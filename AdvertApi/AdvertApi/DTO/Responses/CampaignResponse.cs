@@ -12,5 +12,7 @@ namespace Cw11_WebApplication.Services
 
 		public string BannerName { get; set; }
 
+		public string ClientLogin{ get; set; }
+
 	}
 }

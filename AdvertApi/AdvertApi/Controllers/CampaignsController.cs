@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AdvertApi.DTO.Requests;
 using Cw11_WebApplication.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -22,10 +23,15 @@ namespace AdvertApi.Controllers
 			_dbService = dbService;
 		}
 
-		[HttpGet]
-		public IActionResult GetTest()
-		{	
-			return Ok(_dbService.Test());
+		[Authorize]
+		[HttpGet("{id}")]
+		public IActionResult GetCampaigns(string id)
+		{
+			var _campaigns = _dbService.GetCampaigns(id);
+			if (_campaigns != null)
+				return Ok(_campaigns);
+			else
+				return NotFound("Login not found");
 		}
 
 		[HttpPost]

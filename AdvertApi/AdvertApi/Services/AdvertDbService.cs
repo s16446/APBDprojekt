@@ -151,22 +151,25 @@ namespace Cw11_WebApplication.DAL
 			;
 		}
 
-		public ICollection<CampaignResponse> GetCampaigns(string login)
+		public ICollection<CampaignResponse> GetCampaigns(string id)
 		{
-			Console.WriteLine(login);
-			var _response = from c in _context.Clients.Where(c => c.Login == login)
-					join cc in _context.Campaigns on c.IdClient equals cc.IdClient
-					join b in _context.Banners on cc.IdCampaign equals b.IdCampaign
-					
-					orderby cc.StartDate descending
-					select new CampaignResponse 
-					  {
-						FirstName = c.FirstName,
-						LastName = c.LastName,
-						CampaignStartDate = cc.StartDate,
-						BannerName = b.Name
-					  };
-			return _response.ToList();
+			//var _client= _context.Clients.Where(c => c.Login == id).SingleOrDefault();
+			var _response =
+			from c in _context.Clients
+			join cc in _context.Campaigns on c.IdClient equals cc.IdClient
+			join b in _context.Banners on cc.IdCampaign equals b.IdCampaign
+			where c.Login == id
+			orderby cc.StartDate descending
+			select new CampaignResponse
+			{
+				FirstName = c.FirstName,
+				LastName = c.LastName,
+				CampaignStartDate = cc.StartDate,
+				BannerName = b.Name,
+				ClientLogin = c.Login
+			}
+			;
+		return _response.ToList();
 		}
 
 		public ICollection<CampaignCreatedResponse> AddCampaign(CampaignAddingRequest request)
@@ -176,7 +179,7 @@ namespace Cw11_WebApplication.DAL
 				throw new BuidlingDoesNotExistException($"Building with id = {request.FromIdBuilding} does not exist");
 			var _toBuilding = _context.Buildings.FirstOrDefault(b => b.IdBuilding == request.ToIdBuilding);
 			if (_toBuilding == null)
-				throw new BuidlingDoesNotExistException($"Building with id = {request.FromIdBuilding} does not exist");
+				throw new BuidlingDoesNotExistException($"Building with id = {request.ToIdBuilding} does not exist");
 			
 			if (_fromBuilding.Street != _toBuilding.Street)
 				throw new StreetDoesNotMatchException($"Streets do not match {_fromBuilding.Street},{_toBuilding.Street}");
